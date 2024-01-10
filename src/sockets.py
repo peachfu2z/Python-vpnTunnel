@@ -1,10 +1,10 @@
 # ------- Sockets and Networking ---------
 import socket
 
-from imports.cipher import AESCipher_CBC
-from imports.fd import read_from_fd, write_to_fd
-from imports.headers import ESPHeader, IPHeader, UDPHeader, unpack_ipv4
-from imports.sha import HMACVerifier
+from cipher import AESCipher
+from fd import read_from_fd, write_to_fd
+from headers import ESPHeader, IPHeader, UDPHeader, unpack_ipv4
+from sha import HMACVerifier
 
 
 def create_sockets(interface_name):
@@ -22,7 +22,7 @@ def create_sockets(interface_name):
     return sender, receiver
 
 
-def send_packets(sock: socket.socket, host_ip: str, dst_ip: str, cipher: AESCipher_CBC, verifier: HMACVerifier,fd ,packets,ifnat = 0):
+def send_packets(sock: socket.socket, host_ip: str, dst_ip: str, cipher: AESCipher, verifier: HMACVerifier,fd ,packets,ifnat = 0):
     ip_h = IPHeader(host_ip, dst_ip)  # create an IP header
     packet_from_fd = read_from_fd(fd)  # read the file descriptor for packets
 
@@ -51,7 +51,7 @@ def send_packets(sock: socket.socket, host_ip: str, dst_ip: str, cipher: AESCiph
         packet_from_fd = read_from_fd(fd)
 
 
-def recv_packets(sock: socket.socket, host_ip: str, dst_ip: str, cipher: AESCipher_CBC,verifier: HMACVerifier, fd, packets,ifnat = 0):
+def recv_packets(sock: socket.socket, host_ip: str, dst_ip: str, cipher: AESCipher,verifier: HMACVerifier, fd, packets,ifnat = 0):
     packet_from_socket = sock.recv(2048*1024)
 
     while packet_from_socket:
@@ -90,5 +90,3 @@ def recv_packets(sock: socket.socket, host_ip: str, dst_ip: str, cipher: AESCiph
                     write_to_fd(fd, decrypted_packet)
 
         packet_from_socket = sock.recv(2048*1024)
-
-# ------- END : Sockets and Networking ---------
